@@ -11,7 +11,12 @@ and open the template in the editor.
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
-        <div>Hehe haha</div>
-        <h1>Hihi</h1>
+        <form action="servlet" method="post">
+            IDStudent: <input type="text" name="txtIDStudent"/><br/>
+            Fullname: <input type="text" name="txtFullname"/><br/>
+            Gender: <input type="radio" name="Gender" value="Male" id="male" />Male
+            <input type="radio" name="Gender" value="Female" id="female" />Female<br/>
+            <input type="submit"/>
+        </form>
     </body>
 </html>
