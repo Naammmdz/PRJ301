@@ -52,16 +52,28 @@ public class MainController extends HttpServlet {
             return;
         }
         if(isValidLogin(username, password)){
+            // Sử dụng RequestDispatcher để chuyển tiếp yêu cầu đến trang "search.html"
+            // Ưu điểm: URL trên trình duyệt không thay đổi, chỉ xử lý nội bộ trong server
             RequestDispatcher rd = request.getRequestDispatcher("search.html");
             rd.forward(request, response);
         }else{
-//            response.sendRedirect("invalid.html");
+            // Sử dụng RequestDispatcher để chuyển tiếp yêu cầu đến trang "invalid.html"
+            // Không sử dụng sendRedirect để tránh URL bị thay đổi và không cần gửi yêu cầu mới từ client
+            // response.sendRedirect("invalid.html"); // Dòng này bị comment vì không cần sử dụng redirect ở đây
             RequestDispatcher rd = request.getRequestDispatcher("invalid.html");
             rd.forward(request, response);
         }
         
     }
-
+    //RequestDispatcher:
+    //
+    //  Phù hợp khi cần chuyển yêu cầu đến một trang nội bộ (như search.html hoặc invalid.html trong đoạn code của bạn).
+    //  Không làm lộ URL thực.
+    
+    //sendRedirect:
+    //
+    //Phù hợp khi muốn điều hướng đến một trang khác hoàn toàn (như một trang xác thực ở ứng dụng khác).
+    //URL trình duyệt sẽ thay đổi, giúp dễ dàng bookmark trang hoặc chia sẻ URL.
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
