@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author tungi
+ * @author Naammm
  */
 public class DBUtils {
     private static final String DB_NAME = "prj301_1820_slot8";

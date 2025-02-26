@@ -3,12 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package utils;
+package Utils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,7 +16,7 @@ import java.util.logging.Logger;
  * @author Naammm
  */
 public class DBUtils {
-    private static final String DB_NAME = "prj301_1820_slot8";
+    private static final String DB_NAME = "";
     private static final String DB_USERNAME = "sa";
     private static final String DB_PASSWORD= "12345";
     

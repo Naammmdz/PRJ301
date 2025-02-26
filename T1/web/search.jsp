@@ -68,7 +68,7 @@
             <%                if (session.getAttribute("user") != null) {
                     UserDTO user = (UserDTO) session.getAttribute("user");
             %>
-            <h1> Welcome <%=user.getFullName()%> </h1>
+            <h1> Welcome <%=user.getFullname()%> </h1>
             <form action="MainController">
                 <input type="hidden" name="action" value="logout"/>
                 <input type="submit" value="Logout"/>
