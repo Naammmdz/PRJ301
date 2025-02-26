@@ -1,18 +1,9 @@
-<%-- 
-    Document   : login
-    Created on : Feb 13, 2025, 10:59:38 AM
-    Author     : Naammm
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Đăng nhập</title>
-        <link href='assets/img/logo-color.png' rel='icon' type='image/x-icon' />
-        <link rel="stylesheet" href="assets/css/style.css"> 
-        <link rel="stylesheet" href="assets/font/font-awesome-pro-v6-6.2.0/css/all.min.css"/>
         <style>
             .login-container {
                 min-height: 500px;

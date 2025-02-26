@@ -23,54 +23,55 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "MainController", urlPatterns = {"/MainController"})
 public class MainController extends HttpServlet {
 
-    private static final String LOGIN_PAGE = "login.jsp";
-    
-    public UserDTO getUser(String strUserID) {
-        UserDAO udao = new UserDAO();
-        UserDTO user = udao.readById(strUserID);
-        return user;
-    }
+private static final String LOGIN_PAGE = "login.jsp";
 
-    public boolean isValidLogin(String strUserID, String strPassword) {
-        UserDTO user = getUser(strUserID);
-        System.out.println(user);
+public UserDTO getUser(String strUserID) {
+    UserDAO udao = new UserDAO();
+    UserDTO user = udao.readById(strUserID);
+    return user;
+}
+
+public boolean isValidLogin(String strUserID, String strPassword) {
+    UserDTO user = getUser(strUserID);
+    System.out.println(user);
 //        System.out.println(user.getPassword());
-        System.out.println(strPassword);
-        return user != null && user.getPassword().equals(strPassword);
-    }
-    
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        String url = LOGIN_PAGE;
-        try {
-            String action = request.getParameter("action");
-            System.out.println("action: "+ action);
-            if (action == null) {
-                url = LOGIN_PAGE;
-            } else {
-                if (action.equals("login")) {
-                    String strUserID = request.getParameter("txtUserID");
-                    String strPassword = request.getParameter("txtPassword");
-                    if(isValidLogin(strUserID, strPassword)){
-                        url ="search.jsp";
-                        UserDTO user = getUser(strUserID);
-                        request.setAttribute("user", user);
-                    }else{
-                        url ="invalid.jsp";
-                    }
-                }else if (action.equals("logout")) {
-                    request.setAttribute("user", null);
-                    url = "logout_confirm.jsp";
+    System.out.println(strPassword);
+    return user != null && user.getPassword().equals(strPassword);
+}
+
+protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+    response.setContentType("text/html;charset=UTF-8");
+    String url = LOGIN_PAGE;
+    try {
+        String action = request.getParameter("action");
+        System.out.println("action: "+ action);
+        if (action == null) {
+            url = LOGIN_PAGE;
+        } else {
+            if (action.equals("login")) {
+                String strUserID = request.getParameter("txtUserID");
+                String strPassword = request.getParameter("txtPassword");
+                if(isValidLogin(strUserID, strPassword)){
+                    url ="search.jsp";
+                    UserDTO user = getUser(strUserID);
+                    request.getSession().setAttribute("user", user);
+                }else{
+                    request.setAttribute("message", "Incorrect UserID or Password");
+                    url ="login.jsp";
                 }
+            }else  if (action.equals("logout")) {
+                request.getSession().invalidate(); // Hủy bỏ session
+                url = "login.jsp";
             }
-        } catch (Exception e) {
-            log("Error at MainController: " + e.toString());
-        } finally {
-            RequestDispatcher rd = request.getRequestDispatcher(url);
-            rd.forward(request, response);
         }
+    } catch (Exception e) {
+        log("Error at MainController: " + e.toString());
+    } finally {
+        RequestDispatcher rd = request.getRequestDispatcher(url);
+        rd.forward(request, response);
     }
+}
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
