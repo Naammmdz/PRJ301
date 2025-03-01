@@ -21,7 +21,22 @@ public class ProjectDAO implements IDAO<ProjectDTO, String>{
 
     @Override
     public boolean create(ProjectDTO entity) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String sql = "INSERT INTO tblStartupProjects (project_name, Description, Status, estimated_launch) "
+               + "VALUES (?, ?, ?, ?)";
+        try {
+            Connection conn = DBUtils.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setNString(1, entity.getProjectName());
+            ps.setNString(2, entity.getDescription());
+            ps.setString(3, entity.getStatus());
+            ps.setDate(4, entity.getEstimatedLaunch());
+
+            int n = ps.executeUpdate();
+            return n > 0;
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+        return false;
     }
 
     @Override
@@ -36,12 +51,41 @@ public class ProjectDAO implements IDAO<ProjectDTO, String>{
 
     @Override
     public boolean update(ProjectDTO entity) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String sql = "UPDATE tblStartupProjects " +
+                 "SET project_name = ?, Description = ?, Status = ?, estimated_launch = ? " +
+                 "WHERE project_id = ?";
+        try (
+            Connection conn = DBUtils.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setNString(1, entity.getProjectName());
+            ps.setNString(2, entity.getDescription());
+            ps.setString(3, entity.getStatus());
+            ps.setDate(4, entity.getEstimatedLaunch());
+            ps.setInt(5, entity.getProjectId());
+
+            int n = ps.executeUpdate();
+            return n > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;    
     }
 
     @Override
     public boolean delete(String id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String sql = "DELETE FROM tblStartupProjects WHERE project_id = ?";
+        try (
+            Connection conn = DBUtils.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, id);
+            
+            int n = ps.executeUpdate();
+            return n > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     @Override

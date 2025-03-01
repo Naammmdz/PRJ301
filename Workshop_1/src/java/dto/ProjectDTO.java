@@ -19,6 +19,11 @@ public class ProjectDTO {
     private Date estimatedLaunch;
 
     public ProjectDTO() {
+        this.projectId = 0;
+        this.projectName = "";
+        this.description = "";
+        this.status = "";
+        this.estimatedLaunch = null;
     }
 
     public ProjectDTO(int projectId, String projectName, String description, String status, Date estimatedLaunch) {

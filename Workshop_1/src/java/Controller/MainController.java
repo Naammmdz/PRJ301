@@ -50,8 +50,8 @@ public class MainController extends HttpServlet {
             searchTerm = "";
         }
         List<ProjectDTO> pjs = pdao.searchByTitle2(searchTerm);
-        request.setAttribute("projects", pjs);
-        request.setAttribute("searchTerm", searchTerm);
+        request.getSession().setAttribute("projects", pjs);
+        request.getSession().setAttribute("searchTerm", searchTerm);
     }
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -110,21 +110,61 @@ public class MainController extends HttpServlet {
                             request.setAttribute("estimated_launch_error", "Estimated launch date is required.");
                         }
                         
-                        if (checkError) {
-                            request.getRequestDispatcher("projectForm.jsp").forward(request, response);
-                            return;
-                        }
-                        
                         ProjectDTO project = new ProjectDTO(0, projectName, description, status, estimated_launch);
 
                         if (!checkError) {
                             pdao.create(project);
                             // search
                             search(request, response);
-                            url = "Management.jsp";
+                            response.sendRedirect("Management.jsp");
+                            return;
                         } else {
                             url = "Management.jsp";
-                            request.setAttribute("book", project);
+                            request.setAttribute("project", project);
+                            request.setAttribute("open", "open");
+                        }
+                    } catch (Exception e) {
+                    }
+                } else  if (action.equals("delete")) {
+                    String id = request.getParameter("id");
+                    pdao.delete(id);
+                    // search
+                    search(request, response);
+                    url = "Management.jsp";
+                } else  if (action.equals("update")) {
+                    try {
+                        boolean checkError = false;
+                                   
+                        int projectId = Integer.parseInt(request.getParameter("project_id_update"));
+                        String projectName = request.getParameter("project_name_update");
+                        String description = request.getParameter("Description_update");
+                        String status = request.getParameter("Status_update");
+                        String estimatedLaunchStr = request.getParameter("estimated_launch_update");
+                        
+                        if (projectName == null || projectName.trim().isEmpty()) {
+                            checkError = true;
+                            request.setAttribute("project_name_update_error", "Project name cannot be empty.");
+                        }
+                        Date estimated_launch = null;
+                        if (estimatedLaunchStr != null && !estimatedLaunchStr.isEmpty()) {
+                            estimated_launch = Date.valueOf(estimatedLaunchStr);
+                        } else {
+                            checkError = true;
+                            request.setAttribute("estimated_launch__update_error", "Estimated launch date is required.");
+                        }
+                        
+                        ProjectDTO project = new ProjectDTO(projectId, projectName, description, status, estimated_launch);
+
+                        if (!checkError) {
+                            pdao.update(project);
+                            // search
+                            search(request, response);
+                            response.sendRedirect("Management.jsp");
+                            return;
+                        } else {
+                            url = "Management.jsp";
+                            request.setAttribute("project_update", project);
+                            request.getSession().setAttribute("open_update", "open");
                         }
                     } catch (Exception e) {
                     }
@@ -133,8 +173,10 @@ public class MainController extends HttpServlet {
         } catch (Exception e) {
             log("Error at MainController: " + e.toString());
         } finally {
-            RequestDispatcher rd = request.getRequestDispatcher(url);
-            rd.forward(request, response);
+            if (!response.isCommitted()) {
+                RequestDispatcher rd = request.getRequestDispatcher(url);
+                rd.forward(request, response);
+            }
         }
     }
 

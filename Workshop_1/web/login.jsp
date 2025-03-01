@@ -70,7 +70,7 @@
             </style>
     </head>
     <body>
-        <form action="MainController" method="post" >
+        <form action="MainController" method="POST" >
             <div class="container">
                 <input type="hidden" name="action" value="login" />
                 <label for="username"><b>Username</b></label>

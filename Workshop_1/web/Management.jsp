@@ -21,10 +21,26 @@
         <%  if (session.getAttribute("user") != null) {
             UserDTO user = (UserDTO) session.getAttribute("user");
         %>
-        <h2>Welcome, <%= user.getName()%>!</h2>
+        <header class="header">
+            <div class="header-left">
+                <h2 class="welcome-text">Welcome, <%= user.getName()%>!</h2>
+            </div>
+            <div class="header-right">
+                <form action="MainController" method="POST">
+                    <button type="submit" name="action" value="logout" class="btn-logout"><i class="ri-logout-box-line"></i> Logout</button>
+                </form>
+            </div>           
+        </header>
+
+            
+            
         <div class="container">
-            <div class="admin-control">
-                <div class="admin-control-left">
+            <% if (user.getRole().equals("Team Member")) { %>
+                <div class="admin-control">
+            <% } else { %>
+                <div class="admin-control open">
+            <% } %>
+<!--                <div class="admin-control-left">
                     <select name="status">
                         <option>All</option>
                         <option>Ideation</option>
@@ -32,26 +48,27 @@
                         <option>Launch</option>
                         <option>Scaling</option>
                     </select>
-                </div>
+                </div>-->
                 <%
-                    String searchTerm = request.getAttribute("searchTerm")+"";
+                    String searchTerm = session.getAttribute("searchTerm")+"";
                     searchTerm= searchTerm.equals("null")?"":searchTerm;
+//                    session.removeAttribute("searchTerm");
                 %>
                 <div class="admin-control-center">
-                    <form action="MainController" class="form-search">        
+                    <form action="MainController" class="form-search" method="GET">        
                         <input type="hidden" name="action" value="search"/>
-                        <input type="text" class="form-search-input" placeholder="Tìm kiếm tên món..." name="searchTerm" value="<%=searchTerm%>">
+                        <input type="text" class="form-search-input" placeholder="Search project..." name="searchTerm" value="<%=searchTerm%>">
                         <span class="search-btn"><i class="ri-search-line"></i></span>
                     </form>
                 </div>
                 <div class="admin-control-right">
-                    <button class="btn-control-large" id="btn-add-product"><i class="ri-add-line"></i> Create New Project</button>                  
+                    <button class="btn-control-large" id="btn-add-project"><i class="ri-add-line"></i> Create New Project</button>                  
                 </div>
             </div>
             
             <%
-                if (request.getAttribute("projects") != null) {
-                    List<ProjectDTO> projects = (List<ProjectDTO>) request.getAttribute("projects");
+                if (session.getAttribute("projects") != null) {
+                    List<ProjectDTO> projects = (List<ProjectDTO>) session.getAttribute("projects");
 
             %>
             <div  class="table">
@@ -63,7 +80,10 @@
                                 <td>Description</td>
                                 <td>Status</td>
                                 <td>Estimated Launch</td>
-                                <td>Action</td>
+                                <% if (user.getRole().equals("Founder")) { %>
+                                    <td>Action</td>
+                                <% }%>
+                                
                             </tr>
                         </thead>
                         
@@ -77,10 +97,22 @@
                             <td><%=p.getDescription()%></td>
                             <td><%=p.getStatus()%></td>
                             <td><%=sdf.format(p.getEstimatedLaunch())%></td>
-                            <td><a href="MainController?action=update&id=<%=p.getProjectId()%>&searchTerm=<%=searchTerm%>">
-                                    <img src="assets/img/file-edit-line.png" style="height: 20px"/>
-                                
-                            </a></td>
+                            <% if (user.getRole().equals("Founder")) { %>
+                                <td>
+                                    <a class="btn-edit-project" 
+                                        data-id="<%= p.getProjectId()%>"
+                                        data-name="<%= p.getProjectName()%>"
+                                        data-description="<%= p.getDescription()%>"
+                                        data-status="<%= p.getStatus()%>"
+                                        data-launch="<%= p.getEstimatedLaunch()%>">
+                                        <img src="assets/img/file-edit-line.png" style="height: 20px"/>
+                                    </a>
+                                    <a href="MainController?action=delete&id=<%=p.getProjectId()%>&searchTerm=<%=searchTerm%>">
+                                        <img src="assets/img/delete-bin-line.png" style="height: 20px"/>
+                                    </a>
+                                </td>
+                            <% }%>
+
                         </tr>
                         <%
                             }
@@ -98,43 +130,119 @@
             }
         %>
         
-        <div class="modal create ">
+        
+        <%  String messageNameError = request.getAttribute("project_name_error")+"";
+            messageNameError= messageNameError.equals("null")?"":messageNameError;
+            String messageDateError = request.getAttribute("estimated_launch_error")+"";
+            messageDateError= messageDateError.equals("null")?"":messageDateError;
+            String open = request.getAttribute("open")+"";
+            open= open.equals("null")?"":open;
+            
+            ProjectDTO pdto = new ProjectDTO();
+            try {
+                pdto = (ProjectDTO) request.getAttribute("project");
+            } catch (Exception e) {
+                pdto = new ProjectDTO();
+            }
+            if (pdto == null) {
+                pdto = new ProjectDTO();
+            }
+        %>
+        <div class="modal add-project  <%=open%>">
             <div class="modal-container">
-                <h3 class="modal-container-title add-account-e">CREATE NEW PROJECT</h3>
-<!--                <h3 class="modal-container-title edit-account-e">EDIT PROJECT</h3>-->
+                <h3 class="modal-container-title add-project-e">CREATE NEW PROJECT</h3>
                 <button class="modal-close"><i class="ri-close-line"></i></button>
-                <div class="form-content sign-up">
-                    <form action="MainController" class="create-form">
+                <div class="form-content">
+                    <form action="MainController" class="create-form" method="POST">
                         <input type="hidden" name="action" value="create"/>
                         <div class="form-group">
                             <label class="form-label">Project name</label>
-                            <input name="project_name" type="text" class="form-control">
-                            <span class="form-message-name form-message"></span>
+                            <input name="project_name" type="text" class="form-control" value="<%=pdto.getProjectName()%>">
+                            <span class="form-message"><%=messageNameError%></span>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Description</label>
-                            <textarea class="project-desc" name="Description"></textarea>
-                            <span class="form-message-desc form-message"></span>
+                            <textarea class="project-desc" name="Description" ><%=pdto.getDescription()%></textarea>
+                            <span class="form-message"></span>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Status</label>
                             <select name="Status">
+                                <option><%=pdto.getStatus()%></option>
                                 <option>Ideation</option>
                                 <option>Development</option>
                                 <option>Launch</option>
                                 <option>Scaling</option>
                             </select>
-                            <span class="form-message-status form-message"></span>
+                            <span class="form-message"></span>
                         </div>   
-                        <div class="form-group edit-account-e">
+                        <div class="form-group">
                             <label class="form-label">Estimated launch</label>
                             <input name="estimated_launch" type="date" class="form-control">
+                            <span class="form-message"><%=messageDateError%></span>
                         </div>
-                        <button class="form-submit add-account-e">Create</button>
-<!--                        <button class="form-submit edit-account-e" id="btn-update-account"><i class="fa-regular fa-floppy-disk"></i> Lưu thông tin</button>-->
+                        <button class="form-submit">Create</button>
                     </form>
                 </div>
             </div>
         </div>
+        <%  String messageUpdateNameError = request.getAttribute("project_name_update_error")+"";
+            messageUpdateNameError= messageUpdateNameError.equals("null")?"":messageUpdateNameError;
+            String messageUpdateDateError = request.getAttribute("estimated_launch__update_error")+"";
+            messageUpdateDateError= messageUpdateDateError.equals("null")?"":messageUpdateDateError;
+            String open_update = session.getAttribute("open_update")+"";
+            session.removeAttribute("open_update");
+            open_update= open_update.equals("null")?"":open_update;
+            
+            ProjectDTO pUP = new ProjectDTO();
+            try {
+                pUP = (ProjectDTO) request.getAttribute("project_update");
+            } catch (Exception e) {
+                pUP = new ProjectDTO();
+            }
+            if (pUP == null) {
+                pUP = new ProjectDTO();
+            }
+        %>                        
+        <div class="modal edit-project  <%=open_update%>">
+            <div class="modal-container">
+                <h3 class="modal-container-title edit-project-e">EDIT PROJECT</h3>
+                <button class="modal-close"><i class="ri-close-line"></i></button>
+                <div class="form-content">
+                    <form action="MainController" class="create-form" method="POST">
+                        <input type="hidden" name="action" value="update"/>
+                        <input name="project_id_update" type="text" style="display: none" value="<%=pUP.getProjectId()%>">
+                        <div class="form-group">
+                            <label class="form-label">Project name</label>
+                            <input name="project_name_update" type="text" class="form-control" value="<%=pUP.getProjectName()%>">
+                            <span class="form-message"><%=messageUpdateNameError%></span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Description</label>
+                            <textarea class="project-desc" name="Description_update"><%=pUP.getDescription()%></textarea>
+                            <span class="form-message"></span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <select name="Status_update">
+                                <option><%=pUP.getStatus()%></option>
+                                <option>Ideation</option>
+                                <option>Development</option>
+                                <option>Launch</option>
+                                <option>Scaling</option>
+                            </select>
+                            <span class="form-message"></span>
+                        </div>   
+                        <div class="form-group">
+                            <label class="form-label">Estimated launch</label>
+                            <input name="estimated_launch_update" type="date" class="form-control">
+                            <span class="form-message"><%=messageUpdateDateError%></span>
+                        </div>
+                        <button class="form-submit">Update</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <script src="assets/js/main.js"></script>
     </body>
 </html>
