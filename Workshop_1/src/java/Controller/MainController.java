@@ -102,6 +102,10 @@ public class MainController extends HttpServlet {
                             checkError = true;
                             request.setAttribute("project_name_error", "Project name cannot be empty.");
                         }
+                        if (status == null || status.trim().isEmpty()) {
+                            checkError = true;
+                            request.setAttribute("project_status_error", "Project status cannot be empty.");
+                        }
                         Date estimated_launch = null;
                         if (estimatedLaunchStr != null && !estimatedLaunchStr.isEmpty()) {
                             estimated_launch = Date.valueOf(estimatedLaunchStr);
@@ -145,6 +149,10 @@ public class MainController extends HttpServlet {
                             checkError = true;
                             request.setAttribute("project_name_update_error", "Project name cannot be empty.");
                         }
+                        if (status == null || status.trim().isEmpty()) {
+                            checkError = true;
+                            request.setAttribute("project_status_update_error", "Project status cannot be empty.");
+                        }
                         Date estimated_launch = null;
                         if (estimatedLaunchStr != null && !estimatedLaunchStr.isEmpty()) {
                             estimated_launch = Date.valueOf(estimatedLaunchStr);
@@ -159,6 +167,8 @@ public class MainController extends HttpServlet {
                             pdao.update(project);
                             // search
                             search(request, response);
+                            request.getSession().setAttribute("toastMessageUpdate", "Updated successfully");
+                            request.getSession().setAttribute("toastTypeUpdate", "success");
                             response.sendRedirect("Management.jsp");
                             return;
                         } else {

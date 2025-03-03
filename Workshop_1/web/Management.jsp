@@ -16,24 +16,14 @@
         <title>Project Management</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.css">
         <link rel="stylesheet" href="assets/css/management.css"> 
+        <link rel="stylesheet" href="assets/css/toast-message.css"> 
     </head>
     <body>
-        <%  if (session.getAttribute("user") != null) {
+        <%@include file="header.jsp" %>
+        <%  if (AuthUtils.isLoggedIn(session)) {
             UserDTO user = (UserDTO) session.getAttribute("user");
         %>
-        <header class="header">
-            <div class="header-left">
-                <h2 class="welcome-text">Welcome, <%= user.getName()%>!</h2>
-            </div>
-            <div class="header-right">
-                <form action="MainController" method="POST">
-                    <button type="submit" name="action" value="logout" class="btn-logout"><i class="ri-logout-box-line"></i> Logout</button>
-                </form>
-            </div>           
-        </header>
-
-            
-            
+                   
         <div class="container">
             <% if (user.getRole().equals("Team Member")) { %>
                 <div class="admin-control">
@@ -133,6 +123,8 @@
         
         <%  String messageNameError = request.getAttribute("project_name_error")+"";
             messageNameError= messageNameError.equals("null")?"":messageNameError;
+            String messageStatusError = request.getAttribute("project_status_error")+"";
+            messageStatusError= messageStatusError.equals("null")?"":messageStatusError;
             String messageDateError = request.getAttribute("estimated_launch_error")+"";
             messageDateError= messageDateError.equals("null")?"":messageDateError;
             String open = request.getAttribute("open")+"";
@@ -174,7 +166,7 @@
                                 <option>Launch</option>
                                 <option>Scaling</option>
                             </select>
-                            <span class="form-message"></span>
+                            <span class="form-message"><%=messageStatusError%></span>
                         </div>   
                         <div class="form-group">
                             <label class="form-label">Estimated launch</label>
@@ -188,6 +180,8 @@
         </div>
         <%  String messageUpdateNameError = request.getAttribute("project_name_update_error")+"";
             messageUpdateNameError= messageUpdateNameError.equals("null")?"":messageUpdateNameError;
+            String messageUpdateStatusError = request.getAttribute("project_status_update_error")+"";
+            messageUpdateStatusError= messageUpdateStatusError.equals("null")?"":messageUpdateStatusError;
             String messageUpdateDateError = request.getAttribute("estimated_launch__update_error")+"";
             messageUpdateDateError= messageUpdateDateError.equals("null")?"":messageUpdateDateError;
             String open_update = session.getAttribute("open_update")+"";
@@ -231,7 +225,7 @@
                                 <option>Launch</option>
                                 <option>Scaling</option>
                             </select>
-                            <span class="form-message"></span>
+                            <span class="form-message"><%=messageUpdateStatusError%></span>
                         </div>   
                         <div class="form-group">
                             <label class="form-label">Estimated launch</label>
@@ -243,6 +237,66 @@
                 </div>
             </div>
         </div>
+        <% 
+            String messageUpdate = (String) session.getAttribute("toastMessageUpdate");
+            String typeUpdate = (String) session.getAttribute("toastTypeUpdate");  
+            session.removeAttribute("toastMessageUpdate");
+            session.removeAttribute("toastTypeUpdate");
+
+            if (messageUpdate != null && typeUpdate != null) {
+                String icon = "";
+                String color = "";
+
+                switch (typeUpdate) {
+                    case "success":
+                        color = "#47d864";
+                        break;
+                    case "info":
+                        color = "#2f86eb";
+                        break;
+                    case "warning":
+                        color = "#ffc021";
+                        break;
+                    case "error":
+                        color = "#ff6243";
+                        break;
+                }
+        %>
+            <div id="toast">
+                <div class="toast toast--<%=typeUpdate%>" 
+                     style="animation: slideInLeft ease 0.3s, fadeOut linear 1s 3s forwards">
+                    <div class="toast__private">
+                        <div class="toast__icon">
+<!--                            <i class="<%=icon%>"></i>-->
+                        </div>
+                        <div class="toast__body">
+                            <h3 class="toast__title"><%= typeUpdate.substring(0, 1).toUpperCase() + typeUpdate.substring(1) %></h3>
+                            <p class="toast__msg"><%= messageUpdate %></p>
+                        </div>
+                        <div class="toast__close">
+<!--                            <i class="fa-regular fa-circle-xmark"></i>-->
+                        </div>
+                    </div>
+                    <div class="toast__background" style="background-color: <%= color %>;">
+                    </div>
+                </div>
+            </div>
+        <%
+            }
+        %>
+        <script>
+            const toastContainer = document.getElementById("toast");
+
+            // Auto remove toast
+            const toasts = toastContainer.querySelectorAll(".toast");
+            toasts.forEach((toast) => {
+                const autoRemove = setTimeout(() => {
+                    toast.remove();
+                }, 4000);
+
+                toast.dataset.autoRemove = autoRemove;
+            });
+        </script>
         <script src="assets/js/main.js"></script>
     </body>
 </html>
