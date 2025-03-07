@@ -23,13 +23,15 @@
         <%  if (AuthUtils.isLoggedIn(session)) {
             UserDTO user = (UserDTO) session.getAttribute("user");
         %>
-                   
+        <%
+            String searchTerm = session.getAttribute("searchTerm")+"";
+            searchTerm= searchTerm.equals("null")?"":searchTerm;
+//                    session.removeAttribute("searchTerm");
+        %>   
         <div class="container">
-            <% if (!AuthUtils.isAdmin(session)) { %>
+            <% if (AuthUtils.isAdmin(session)) { %>
                 <div class="admin-control">
-            <% } else { %>
-                <div class="admin-control open">
-            <% } %>
+           
 <!--                <div class="admin-control-left">
                     <select name="status">
                         <option>All</option>
@@ -39,22 +41,19 @@
                         <option>Scaling</option>
                     </select>
                 </div>-->
-                <%
-                    String searchTerm = session.getAttribute("searchTerm")+"";
-                    searchTerm= searchTerm.equals("null")?"":searchTerm;
-//                    session.removeAttribute("searchTerm");
-                %>
+
                 <div class="admin-control-center">
                     <form action="MainController" class="form-search" method="GET">        
                         <input type="hidden" name="action" value="search"/>
                         <input type="text" class="form-search-input" placeholder="Search project..." name="searchTerm" value="<%=searchTerm%>">
-                        <span class="search-btn"><i class="ri-search-line"></i></span>
+                        <button  class="search-btn"><i class="ri-search-line"></i></button>
                     </form>
                 </div>
                 <div class="admin-control-right">
                     <button class="btn-control-large" id="btn-add-project"><i class="ri-add-line"></i> Create New Project</button>                  
                 </div>
             </div>
+        <% } %>
             
             <%
                 if (session.getAttribute("projects") != null) {
@@ -109,6 +108,7 @@
                         %>
                         </tbody>
                     </table>
+                </div>
             </div>
         </div>
         <%    }

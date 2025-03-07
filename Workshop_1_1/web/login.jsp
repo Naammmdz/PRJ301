@@ -72,7 +72,6 @@
     <body>
         <form action="MainController" method="POST" >
             <div class="container">
-                <h2>Login</h2>
                 <input type="hidden" name="action" value="login" />
                 <label for="username"><b>Username</b></label>
                 <input type="text" placeholder="Please enter Username" name="txtUserName" required>
