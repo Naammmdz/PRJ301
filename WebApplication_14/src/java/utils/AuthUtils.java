@@ -19,7 +19,7 @@ public class AuthUtils {
     
     public static UserDTO getUser(String strUserID){
         UserDAO udao = new UserDAO();
-        UserDTO user = udao.readById(strUserID);
+        UserDTO user = udao.readByID(strUserID);
         return user;
     }
     
@@ -28,7 +28,7 @@ public class AuthUtils {
         System.out.println(user);
 //        System.out.println(user.getPassword());
         System.out.println(strPassword);
-        return user != null && user.getPassword().equals(strPassword);
+        return user != null && utils.PasswordUtils.checkPassword(strPassword, user.getPassword());
     }
     
     public static UserDTO getUser(HttpSession session) {

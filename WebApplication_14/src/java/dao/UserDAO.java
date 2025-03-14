@@ -49,7 +49,7 @@ public class UserDAO implements IDAO<UserDTO, String> {
             Connection conn = DBUtils.getConnection();
             conn = DBUtils.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery(sql);
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 UserDTO user = new UserDTO(
                         rs.getString("userID"),
@@ -67,7 +67,7 @@ public class UserDAO implements IDAO<UserDTO, String> {
     }
 
     @Override
-    public UserDTO readById(String id) {
+    public UserDTO readByID(String id) {
         String sql = "SELECT * FROM tblUsers WHERE userID= ?";
         try {
             Connection conn = DBUtils.getConnection();

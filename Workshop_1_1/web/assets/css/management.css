@@ -9,10 +9,23 @@ and open the template in the editor.
 */
 
 body {
+    font-family: Arial, sans-serif;
     margin: 0;
-    font-family: "SF Pro Display", sans-serif;
-    background: #667eea;
-    overflow-x: hidden;
+    padding: 0;
+    background: #f4f4f4;
+}
+
+a {
+    text-decoration: none; /* Bỏ gạch chân */
+    color: black; /* Màu chữ bình thường */
+}
+
+a:hover {
+    color: blue; /* Màu khi di chuột vào */
+}
+
+a:visited {
+    color: black; /* Không đổi màu tím sau khi nhấp */
 }
 
 .header {
@@ -67,293 +80,77 @@ body {
 
 /* Container tổng */
 .container {
-    width: 100%;
-    max-width: 1300px;
-    margin: auto;
+    max-width: 900px;
+    margin: 20px auto;
+    background: white;
     padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Bố cục quản lý sản phẩm */
-.admin-control {
+/* Tabs */
+.tabs {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #f8f9fa;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-bottom: 2px solid #ddd;
 }
 
-/*.admin-control.open {
-    pointer-events: auto;
-    opacity: 1;
-}*/
-
-/* Dropdown trạng thái */
-.admin-control-left select {
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 16px;
-    cursor: pointer;
-    background: white;
-}
-
-/* Ô tìm kiếm */
-.admin-control-center {
-    flex-grow: 1;
-    margin: 0 15px;
-}
-
-.form-search {
-    display: flex;
-    align-items: center;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    padding: 5px;
-    background: white;
-}
-
-.form-search-input {
+.tab-link {
+    padding: 10px 20px;
     border: none;
-    outline: none;
-    padding: 8px;
-    font-size: 16px;
-    flex-grow: 1;
-}
-
-.search-btn {
-    padding: 8px;
-    color: #555;
-/*    cursor: pointer;*/
-}
-
-/* Nút thêm sản phẩm */
-.btn-control-large {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    padding: 10px 15px;
-    background: #2f86eb;
-    color: white;
-    font-size: 16px;
-    border: none;
-    border-radius: 6px;
+    background: none;
     cursor: pointer;
-    transition: 0.3s;
+    font-size: 16px;
+    color: #333;
 }
 
-.btn-control-large:hover {
-    background: #5a67d8;
+.tab-link.active {
+    border-bottom: 3px solid #007bff;
+    color: #007bff;
 }
 
-.access-denied-section{
-    position: absolute;
-    top:50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
+/* Nội dung tab */
+.tab-content {
+    display: block;
+    padding: 20px 0;
 }
 
-.access-denied-img{
-    width: 100%;
+.hidden {
+    display: none;
 }
 
-.table {
-    width: 100%;
-    overflow: auto;
-    background: #fff;
-    border-radius: 7px;
-    margin-top: 10px
-}
-
+/* Bảng */
 table {
+    width: 100%;
     border-collapse: collapse;
-}
-
-tr {
-    border-bottom: 1px solid gainsboro;
-}
-
-thead td {
-    font-size: 16px;
-    text-transform: uppercase;
-    font-weight: 500;
-    background: gainsboro;
-    padding: 15px;
-    text-align: center;
-    white-space: nowrap;
-}
-
-tbody tr td {
-    padding: 10px 15px;
-    text-align: center;
-    white-space: nowrap;
-}
-
-/* Modal */
-.modal {
-    background-color: rgba(0, 0, 0, 0.6);
-    position: fixed;
-    top: 0;
-    right: 0;
-    left: 0;
-    bottom: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-    z-index: 10;
-}
-
-.modal.open {
-    pointer-events: auto;
-    opacity: 1;
-}
-
-.modal-close {
-    background-color: rgba(0, 0, 0, 0.3);
-    height: 30px;
-    width: 30px;
-    line-height: 30px;
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    z-index: 2;
-    border-radius: 50%;
-    border: none;
-    outline: none;
-    color: var(--white);
-    cursor: pointer;
-}
-
-.modal.open .modal-container {
-    transform: scale(1);
-}
-
-.modal-close i {
-    transition: all 0.4s;
-    color: #fff;
-}
-
-.modal-close:hover i {
-    transform: rotate(180deg);
-}
-
-.modal-container {
-    background-color: #fff;
-    max-height: calc(100vh - 60px);
-    box-shadow: 0px 4px 30px rgb(0 0 0 / 25%);
-    border-radius: 5px;
-    overflow: hidden;
-    overflow-y: scroll;
-    overflow-y: overlay;
-    position: relative;
-    transform: scale(0.8);
-    transition: 0.3s ease;
-}
-
-.modal-container-title {
-    display: inline-block;
-    margin-top: 16px;
-    margin-left: 20px;
-    margin-bottom: 5px;
-    text-transform: uppercase;
-}
-
-.form-group {
-    margin-bottom: 10px;
-}
-
-
-.form-label {
-    margin-bottom: 5px;
-    display: inline-block;
-    font-size: 14px;
-    font-weight: 600;
-}
-
-.form-control {
-    width: 100%;
-    height: 40px;
-    padding: 8px 12px;
-    border: 1px solid #e5e5e5;
-    border-radius: 5px;
-    outline: none;
-    transition: border 0.3s linear;
-}
-
-.project-desc {
-    width: 100%;
-    height: 100px;
-    border: none;
-    outline: none;
-    border-radius: 5px;
-    padding: 15px;
-    background-color: #f7f7f7;
-    font-size: 14px;
-}
-
-.form-control.error {
-    border-color: red;
-}
-
-.form-control:focus {
-    border-color: #5a67d8;
-}
-
-.form-message {
-    color: red;
-    font-size: 13px;
     margin-top: 10px;
 }
 
-.form-submit {
-    height: 40px;
-    background-color: #2f86eb;
-    color: #fff;
-    padding: 10px 30px;
-    border-radius: 5px;
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
 }
 
-.form-submit i {
-    margin-right: 6px;
+th {
+    background: #007bff;
+    color: white;
 }
 
-.modal.add-project .modal-container {
-    overflow: hidden;
-    width: 500px;
+/* Form */
+form {
+    display: grid;
+    gap: 10px;
 }
 
-.modal.edit-project .modal-container {
-    overflow: hidden;
-    width: 500px;
-}
-
-.form-content {
-    padding: 0 46px 20px 20px;
-}
-
-.form-title {
-    text-align: center;
-    padding-bottom: 10px;
-    font-size: 20px;
-}
-
-.create-form {
-    margin-top: 15px;
-}
-
-.form-group select {
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
+input, select, button {
+    padding: 8px;
     font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    background: #28a745;
+    color: white;
     cursor: pointer;
-    background: white;
 }

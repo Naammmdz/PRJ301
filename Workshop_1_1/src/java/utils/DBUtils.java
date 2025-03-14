@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  * @author Naammm
  */
 public class DBUtils {
-    private static final String DB_NAME = "startup_project_management";
+    private static final String DB_NAME = "Workshop2";
     private static final String DB_USERNAME = "sa";
     private static final String DB_PASSWORD= "12345";
     

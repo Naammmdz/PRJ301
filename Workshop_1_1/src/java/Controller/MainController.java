@@ -43,7 +43,8 @@ public class MainController extends HttpServlet {
             UserDTO user = AuthUtils.getUser(strUserName);
             request.getSession().setAttribute("user", user);
             // search
-            processSearch(request, response);
+//            processSearch(request, response);
+            response.sendRedirect("DashboardController");
         }else if (AuthUtils.getUser(strUserName) == null){
             url = LOGIN_PAGE;
             request.setAttribute("toastMessage", "Tài khoản không tồn tại!");

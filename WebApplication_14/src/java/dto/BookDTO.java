@@ -16,6 +16,7 @@ public class BookDTO {
     private int publishYear;
     private double price;
     private int quantity;
+    private String image;
 
     public BookDTO() {
         this.bookID = "";
@@ -24,15 +25,17 @@ public class BookDTO {
         this.publishYear = 0;
         this.price = 0;
         this.quantity = 0;
+        this.image = "";
     }
 
-    public BookDTO(String bookID, String title, String author, int publishYear, double price, int quantity) {
+    public BookDTO(String bookID, String title, String author, int publishYear, double price, int quantity, String image) {
         this.bookID = bookID;
         this.title = title;
         this.author = author;
         this.publishYear = publishYear;
         this.price = price;
         this.quantity = quantity;
+        this.image = image;
     }
 
     public String getBookID() {
@@ -82,5 +85,14 @@ public class BookDTO {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+    
     
 }
