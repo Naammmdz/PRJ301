@@ -24,7 +24,21 @@ public class ExamDAO implements IDAO<ExamDTO, String>{
 
     @Override
     public boolean create(ExamDTO entity) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String sql = "INSERT INTO tblExams (exam_title, subject, category_id, total_marks, duration) VALUES (?, ?, ?, ?, ?)";
+        try {
+            Connection conn = DBUtils.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, entity.getExamTitle());
+            ps.setString(2, entity.getSubject());
+            ps.setInt(3, entity.getCategoryId());
+            ps.setInt(4, entity.getTotalMarks());
+            ps.setInt(5, entity.getDuration());
+            int i = ps.executeUpdate();
+            return i > 0;
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+        return false;
     }
 
     @Override
@@ -56,7 +70,26 @@ public class ExamDAO implements IDAO<ExamDTO, String>{
 
     @Override
     public ExamDTO readById(String id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String sql = "SELECT * FROM tblExams WHERE exam_id= ?";
+         try {
+            Connection conn = DBUtils.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                ExamDTO user = new ExamDTO(
+                        rs.getInt("exam_id"),
+                        rs.getString("exam_title"),
+                        rs.getString("subject"),
+                        rs.getInt("category_id"),
+                        rs.getInt("total_marks"),
+                        rs.getInt("duration"));
+                return user;
+            }
+        } catch (ClassNotFoundException ex) {
+        } catch (SQLException ex) {
+        }
+        return null;
     }
 
     @Override

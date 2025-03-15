@@ -201,20 +201,21 @@ public class MainController extends HttpServlet {
                     url = processLogin(request, response);
                 }else  if (action.equals("logout")) {
                     url = processLogout(request, response);
-                } else if (action.equals("search")) {
-                    // search
-                    url = processSearch(request, response);
-                } else if (action.equals("create")){
-                    url = processCreate(request, response);
-                } else  if (action.equals("delete")) {
-                    String id = request.getParameter("id");
-                    pdao.delete(id);
-                    // search
-                    processSearch(request, response);
-                    url = "Management.jsp";
-                } else  if (action.equals("update")) {
-                    url = processUpdate(request, response);
                 }
+//                } else if (action.equals("search")) {
+//                    // search
+//                    url = processSearch(request, response);
+//                } else if (action.equals("create")){
+//                    url = processCreate(request, response);
+//                } else  if (action.equals("delete")) {
+//                    String id = request.getParameter("id");
+//                    pdao.delete(id);
+//                    // search
+//                    processSearch(request, response);
+//                    url = "Management.jsp";
+//                } else  if (action.equals("update")) {
+//                    url = processUpdate(request, response);
+//                }
             }
         } catch (Exception e) {
             log("Error at MainController: " + e.toString());

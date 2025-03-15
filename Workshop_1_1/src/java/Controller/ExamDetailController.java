@@ -5,12 +5,13 @@
  */
 package Controller;
 
-import dao.ExamCategoryDAO;
 import dao.ExamDAO;
-import dto.ExamCategoryDTO;
+import dao.QuestionDAO;
 import dto.ExamDTO;
+import dto.QuestionDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -23,8 +24,8 @@ import utils.AuthUtils;
  *
  * @author Naammm
  */
-@WebServlet(name = "CreateExamController", urlPatterns = {"/CreateExamController"})
-public class CreateExamController extends HttpServlet {
+@WebServlet(name = "ExamDetailController", urlPatterns = {"/ExamDetailController"})
+public class ExamDetailController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -40,25 +41,19 @@ public class CreateExamController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         HttpSession session = request.getSession();
         if (AuthUtils.isAdmin(session)) {
-            try {
-                String action = request.getParameter("action");
-                String examTitle = request.getParameter("examTitle");
-                String subject = request.getParameter("subject");
-                String categoryName = request.getParameter("categoryName");
-                int totalMarks = Integer.parseInt(request.getParameter("totalMarks"));
-                int duration = Integer.parseInt(request.getParameter("duration"));
-
-                ExamDAO examDAO = new ExamDAO();
-                ExamCategoryDAO ecdao = new ExamCategoryDAO();
-
-                ExamCategoryDTO examCategory = ecdao.readByName(categoryName);
-                boolean success = examDAO.create(new ExamDTO(0, examTitle, subject, examCategory.getCategoryId(), totalMarks, duration));
-
-                if (success) {
-                    response.sendRedirect("DashboardController");
-                }
-            } catch (Exception e) {
-            }
+            String examId = request.getParameter("examId");
+            
+            ExamDAO examDAO = new ExamDAO();
+            ExamDTO exam = examDAO.readById(examId);
+            
+            QuestionDAO questionDAO = new QuestionDAO();
+            List<QuestionDTO> questionList = questionDAO.getQuestionsByExamId(examId);
+            
+            request.setAttribute("exam", exam);
+            request.setAttribute("questionList", questionList);
+            request.getRequestDispatcher("exam_detail.jsp").forward(request, response);
+        } else {
+            response.sendRedirect("DashboardController");
         }
     }
 

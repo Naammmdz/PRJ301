@@ -73,15 +73,21 @@
                             <th>Subject</th>
                             <th>Total Marks</th>
                             <th>Duration</th>
+                            <c:if test="${isAdmin}">
+                                <th>Action</th>
+                            </c:if>
                         </tr>
                     </thead>
                     <tbody id="exam-table">
                         <c:forEach items="${examList}" var="exam">
                             <tr>
-                                <td>${exam.examTitle}</td>
+                                <td><a href="ExamDetailController?examId=${exam.examId}">${exam.examTitle}</a></td>
                                 <td>${exam.subject}</td>
                                 <td>${exam.totalMarks}</td>
                                 <td>${exam.duration}</td>
+                                <c:if test="${isAdmin}">
+                                    <td><a href="AddQuestionsController?examId=${exam.examId}&examTitle=${exam.examTitle}">Add question</a></td>
+                                </c:if>
                             </tr>
                         </c:forEach>   
                     </tbody>
@@ -93,20 +99,21 @@
             <div id="create-exam" class="tab-content <c:if test="${not empty requestScope.hiddenCreate}">${hiddenCreate}</c:if>">
                 <h3>➕ Create New Exam</h3>
                 <form action="CreateExamController" method="post">
+                    <input type="hidden" name="acction" value="create">
                     <label>Exam Title:</label>
                     <input type="text" name="examTitle" required>
                     <label>Subject:</label>
                     <input type="text" name="subject" required>
                     <label>Category:</label>
-                    <select name="categoryId" required>
+                    <select name="categoryName" required>
                         <option value="Quiz">Quiz</option>
                         <option value="Progress Test">Progress Test</option>
                         <option value="Final Exam">Final Exam</option>
                     </select>
                     <label>Total Marks:</label>
-                    <input type="number" name="ttotalMarks" required min="0">
+                    <input type="number" name="totalMarks" required min="1">
                     <label>Duration (minutes):</label>
-                    <input type="number" name="duration" required min="0">
+                    <input type="number" name="duration" required min="1">
                     <button type="submit">Create Exam</button>
                 </form>
             </div>
