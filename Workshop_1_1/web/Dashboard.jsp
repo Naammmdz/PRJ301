@@ -81,7 +81,14 @@
                     <tbody id="exam-table">
                         <c:forEach items="${examList}" var="exam">
                             <tr>
-                                <td><a href="ExamDetailController?examId=${exam.examId}">${exam.examTitle}</a></td>
+                                <c:choose>
+                                    <c:when test="${isAdmin}">
+                                        <td><a href="ExamDetailController?examId=${exam.examId}">${exam.examTitle}</a></td>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <td><a href="TakeExamController?examId=${exam.examId}">${exam.examTitle}</a></td>
+                                    </c:otherwise>
+                                </c:choose>
                                 <td>${exam.subject}</td>
                                 <td>${exam.totalMarks}</td>
                                 <td>${exam.duration}</td>
