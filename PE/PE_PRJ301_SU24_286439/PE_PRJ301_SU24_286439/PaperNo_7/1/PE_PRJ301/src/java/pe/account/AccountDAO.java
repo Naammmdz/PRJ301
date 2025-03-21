@@ -12,7 +12,7 @@ public class AccountDAO {
 
     public AccountDTO checkLogin(String id, String password) {
         String sql = "SELECT * FROM Account WHERE account= ? AND pass= ?";
-       try {
+        try {
             Connection conn = DBUtils.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, id);
@@ -34,7 +34,7 @@ public class AccountDAO {
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
         } catch (SQLException ex) {
-            ex.printStackTrace(); 
+            ex.printStackTrace();            
         }
         return null;
     }

@@ -50,8 +50,9 @@
                 </c:forEach>
             </tbody>
         </table>
-        <form action="MainController" method="GET">
-            <a href="MainController?action=getAll">Create</a>
-        </form>
+
+        <c:if test="${sessionScope.user.roleDB.equals('super')}">
+        <a href="MainController?action=getAll">Create</a>
+        </c:if>
     </body>
 </html>

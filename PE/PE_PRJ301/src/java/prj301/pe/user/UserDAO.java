@@ -58,14 +58,14 @@ public class UserDAO {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 UserDTO user = new UserDTO(
-                    rs.getString("userID"),
+                        rs.getString("userID"),
                         rs.getString("fullName"),
                         rs.getString("password"),
                         rs.getString("roleID"),
                         rs.getBoolean("status")
-                    );
+                );
                 list.add(user);
-                }
+            }
         } catch (Exception e) {
         }
         

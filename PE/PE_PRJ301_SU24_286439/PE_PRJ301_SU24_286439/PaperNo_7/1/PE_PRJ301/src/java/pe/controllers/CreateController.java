@@ -7,11 +7,15 @@ package pe.controllers;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import pe.appointment.AppointmentDAO;
 
 /**
  *
@@ -32,10 +36,29 @@ public class CreateController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        String url = "GetAllAccountController";
         try {
             String account = request.getParameter("account");
+            String partnerPhone = request.getParameter("partnerPhone");
+            String partnerName = request.getParameter("partnerName");
+            String timeToMeetStr = request.getParameter("timeToMeet");
+            String place = request.getParameter("place");
+            float expense = Float.parseFloat(request.getParameter("expense"));
+            String note = request.getParameter("note");
             
+            AppointmentDAO adao = new AppointmentDAO();
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            Date parsedDate = inputFormat.parse(timeToMeetStr);
+            Timestamp timeToMeet = new Timestamp(parsedDate.getTime());
+            boolean check = adao.creat(account, partnerPhone,partnerName, timeToMeet, place, expense, note);
+            
+            if (check) {
+                url = "ShowController";
+            }
         } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            response.sendRedirect(url);
         }
     }
 

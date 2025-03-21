@@ -10,7 +10,7 @@
         <h1>Creating appointment</h1>
         <hr/>
         <!--your code here-->
-        <form action="CreateController" method="POST">
+        <form action="MainController" method="POST">
             <input type="hidden" name="action" value="create">
             Account: <select name="account" required>
                 <c:forEach  items="${requestScope.LIST_ACCOUNT}" var="acc">
@@ -19,7 +19,7 @@
             </select><br>
             Partner Phone: <input type="text" name="partnerPhone" required><br>
             Partner Name: <input type="text" name="partnerName" required><br>
-            Time to Meet: <input type="datetime-local" name="timeToMeet" required><br>
+            Time to Meet: <input type="datetime-local" step="1" name="timeToMeet" required><br>
             Place: <input type="text" name="place" required><br>
             Expense: <input type="number" step="0.01" name="expense" value="100"><br>
             Note: <textarea name="note"></textarea><br>
