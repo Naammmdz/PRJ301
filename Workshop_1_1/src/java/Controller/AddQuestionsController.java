@@ -48,6 +48,8 @@ public class AddQuestionsController extends HttpServlet {
             } else {
                 response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "Phương thức không được hỗ trợ");
             }
+        } else {
+            response.sendRedirect("DashboardController");
         }
     }
 

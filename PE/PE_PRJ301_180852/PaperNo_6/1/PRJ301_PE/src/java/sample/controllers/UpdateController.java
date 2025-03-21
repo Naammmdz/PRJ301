@@ -3,12 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Controller;
+package sample.controllers;
 
-import dao.ExamCategoryDAO;
-import dao.ExamDAO;
-import dto.ExamCategoryDTO;
-import dto.ExamDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -16,15 +12,15 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import utils.AuthUtils;
+import sample.models.DAO;
+import sample.models.RoomDTO;
 
 /**
  *
  * @author Naammm
  */
-@WebServlet(name = "CreateExamController", urlPatterns = {"/CreateExamController"})
-public class CreateExamController extends HttpServlet {
+@WebServlet(name = "UpdateController", urlPatterns = {"/UpdateController"})
+public class UpdateController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -38,29 +34,34 @@ public class CreateExamController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        HttpSession session = request.getSession();
-        if (AuthUtils.isAdmin(session)) {
-            try {
-                String action = request.getParameter("action");
-                String examTitle = request.getParameter("examTitle");
-                String subject = request.getParameter("subject");
-                String categoryName = request.getParameter("categoryName");
-                int totalMarks = Integer.parseInt(request.getParameter("totalMarks"));
-                int duration = Integer.parseInt(request.getParameter("duration"));
+        String searchTerm = request.getParameter("search");
+        try {
+            String roomId = request.getParameter("roomId");
+            String name = request.getParameter("roomName");
+            String description = request.getParameter("roomDescription");
+            String priceStr = request.getParameter("roomPrice");
+            String areaStr = request.getParameter("roomArea");
 
-                ExamDAO examDAO = new ExamDAO();
-                ExamCategoryDAO ecdao = new ExamCategoryDAO();
+            float price = Float.parseFloat(priceStr);
+            float area = Float.parseFloat(areaStr);
 
-                ExamCategoryDTO examCategory = ecdao.readByName(categoryName);
-                boolean success = examDAO.create(new ExamDTO(0, examTitle, subject, examCategory.getCategoryId(), totalMarks, duration));
+            RoomDTO room = new RoomDTO();
+            room.setId(roomId);
+            room.setName(name);
+            room.setDescription(description);
+            room.setPrice(price);
+            room.setArea(area);
 
-                if (success) {
-                    response.sendRedirect("DashboardController");
-                }
-            } catch (Exception e) {
-            }
-        } else{
-            response.sendRedirect("DashboardController");
+            DAO dao = new DAO();
+            boolean check = dao.update(room);
+            System.out.println(check);
+            
+            request.setAttribute("searchTerm", searchTerm);
+            //System.out.println(room + " " + search);
+        } catch (Exception e) {
+            log("Error at UpdateController: " + e.toString());
+        } finally {
+            request.getRequestDispatcher("MainController?action=search&searchTerm="+searchTerm).forward(request, response);
         }
     }
 

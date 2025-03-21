@@ -43,7 +43,7 @@ public class FilterController extends HttpServlet {
 
         ExamDAO edao = new ExamDAO();
         ExamCategoryDAO ecdao = new ExamCategoryDAO();
-        if (categoryName.equals("All")) {
+        if (categoryName.equals("All") || categoryName==null) {
             List<ExamCategoryDTO> examcategoryList = ecdao.readAll();
             List<ExamDTO> examList = edao.readAll();
             request.setAttribute("examcategoryList", examcategoryList);

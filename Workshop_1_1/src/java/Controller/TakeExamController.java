@@ -50,6 +50,8 @@ public class TakeExamController extends HttpServlet {
             } else {
                 response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "Phương thức không được hỗ trợ");
             }
+        } else{
+            response.sendRedirect("DashboardController");
         }
     }
 
@@ -94,7 +96,7 @@ public class TakeExamController extends HttpServlet {
     private void handleGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
         HttpSession session = request.getSession();
-        if (AuthUtils.isLoggedIn(session)) {
+        if (!AuthUtils.isAdmin(session)) {
             String examId = request.getParameter("examId");
             
             if (examId == null) {
@@ -106,36 +108,46 @@ public class TakeExamController extends HttpServlet {
             ExamDTO exam = examDAO.readById(examId);
             
             QuestionDAO questionDAO = new QuestionDAO();
-            List<QuestionDTO> questionList = questionDAO.getQuestionsByExamId(examId);
+            List<QuestionDTO> questions = questionDAO.getQuestionsByExamId(examId);
             
             request.setAttribute("exam", exam);
-            request.setAttribute("questionList", questionList);
-            request.getRequestDispatcher("exam_detail.jsp").forward(request, response);
+            request.setAttribute("questions", questions);
+            request.getRequestDispatcher("take_exam.jsp").forward(request, response);
+        } else {
+            response.sendRedirect("DashboardController");
         }
     }
 
     private void handlePost(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
         try {
-            int examId = Integer.parseInt(request.getParameter("examId"));
-            String[] questionTexts = request.getParameterValues("questionText[]");
-            String[] optionsA = request.getParameterValues("optionA[]");
-            String[] optionsB = request.getParameterValues("optionB[]");
-            String[] optionsC = request.getParameterValues("optionC[]");
-            String[] optionsD = request.getParameterValues("optionD[]");
-            String[] correctOptions = request.getParameterValues("correctOption[]");
-
-            List<QuestionDTO> questions = new ArrayList<>();
-            for (int i = 0; i < questionTexts.length; i++) {
-                questions.add(new QuestionDTO(0, examId, questionTexts[i], optionsA[i], optionsB[i], optionsC[i], optionsD[i], correctOptions[i]));
-            }
-
-            QuestionDAO questionDAO = new QuestionDAO();
-            boolean success = questionDAO.createMultiple(questions);
-
-            if (success) {
+           String examId = request.getParameter("examId");
+           if (examId == null) {
                 response.sendRedirect("DashboardController");
+                return;
             }
+            
+            ExamDAO examDAO = new ExamDAO();
+            ExamDTO exam = examDAO.readById(examId);
+            
+            QuestionDAO questionDAO = new QuestionDAO();
+            List<QuestionDTO> questions = questionDAO.getQuestionsByExamId(examId);
+            
+            int correctAnswers = 0;
+            for (QuestionDTO question : questions) {
+                String selectedAnswer = request.getParameter("question_" + question.getQuestionId());
+                if (selectedAnswer != null && selectedAnswer.equals(question.getCorrectOption())) {
+                    correctAnswers++;
+                }
+            }
+            
+            int totalQuestions = questions.size();
+            double score = ((double) correctAnswers / totalQuestions) * exam.getTotalMarks();
+            
+            request.setAttribute("score", score);
+            request.setAttribute("totalQuestions", totalQuestions);
+            request.setAttribute("correctAnswers", correctAnswers);
+            request.getRequestDispatcher("exam_result.jsp").forward(request, response);
         } catch (Exception e) {
         }
     }

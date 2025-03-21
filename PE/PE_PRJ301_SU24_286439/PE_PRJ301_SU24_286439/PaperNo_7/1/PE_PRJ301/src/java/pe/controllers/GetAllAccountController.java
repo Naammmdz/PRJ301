@@ -3,28 +3,25 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Controller;
+package pe.controllers;
 
-import dao.ExamCategoryDAO;
-import dao.ExamDAO;
-import dto.ExamCategoryDTO;
-import dto.ExamDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import utils.AuthUtils;
+import pe.account.AccountDAO;
+import pe.account.AccountDTO;
 
 /**
  *
  * @author Naammm
  */
-@WebServlet(name = "CreateExamController", urlPatterns = {"/CreateExamController"})
-public class CreateExamController extends HttpServlet {
+@WebServlet(name = "GetAllAccountController", urlPatterns = {"/GetAllAccountController"})
+public class GetAllAccountController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -38,29 +35,13 @@ public class CreateExamController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        HttpSession session = request.getSession();
-        if (AuthUtils.isAdmin(session)) {
-            try {
-                String action = request.getParameter("action");
-                String examTitle = request.getParameter("examTitle");
-                String subject = request.getParameter("subject");
-                String categoryName = request.getParameter("categoryName");
-                int totalMarks = Integer.parseInt(request.getParameter("totalMarks"));
-                int duration = Integer.parseInt(request.getParameter("duration"));
-
-                ExamDAO examDAO = new ExamDAO();
-                ExamCategoryDAO ecdao = new ExamCategoryDAO();
-
-                ExamCategoryDTO examCategory = ecdao.readByName(categoryName);
-                boolean success = examDAO.create(new ExamDTO(0, examTitle, subject, examCategory.getCategoryId(), totalMarks, duration));
-
-                if (success) {
-                    response.sendRedirect("DashboardController");
-                }
-            } catch (Exception e) {
-            }
-        } else{
-            response.sendRedirect("DashboardController");
+        try {
+            AccountDAO dao = new AccountDAO();
+            List<AccountDTO> list = dao.getAll();
+            request.setAttribute("LIST_ACCOUNT", list);
+        } catch (Exception e) {
+        } finally {
+            request.getRequestDispatcher("create.jsp").forward(request, response);
         }
     }
 

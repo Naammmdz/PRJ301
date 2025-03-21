@@ -3,64 +3,50 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Controller;
+package prj301.pe.controllers;
 
-import dao.ExamCategoryDAO;
-import dao.ExamDAO;
-import dto.ExamCategoryDTO;
-import dto.ExamDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import utils.AuthUtils;
 
 /**
  *
- * @author Naammm
+ * @author hd
  */
-@WebServlet(name = "CreateExamController", urlPatterns = {"/CreateExamController"})
-public class CreateExamController extends HttpServlet {
+public class MainController extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+    private static final String WELCOME="login.jsp";
+    
+    
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        HttpSession session = request.getSession();
-        if (AuthUtils.isAdmin(session)) {
-            try {
-                String action = request.getParameter("action");
-                String examTitle = request.getParameter("examTitle");
-                String subject = request.getParameter("subject");
-                String categoryName = request.getParameter("categoryName");
-                int totalMarks = Integer.parseInt(request.getParameter("totalMarks"));
-                int duration = Integer.parseInt(request.getParameter("duration"));
-
-                ExamDAO examDAO = new ExamDAO();
-                ExamCategoryDAO ecdao = new ExamCategoryDAO();
-
-                ExamCategoryDTO examCategory = ecdao.readByName(categoryName);
-                boolean success = examDAO.create(new ExamDTO(0, examTitle, subject, examCategory.getCategoryId(), totalMarks, duration));
-
-                if (success) {
-                    response.sendRedirect("DashboardController");
+        String url= WELCOME;
+        try {
+            String action= request.getParameter("action");
+            if (action == null) {
+                url = WELCOME;
+            } else {
+                if (action.equals("login")) {
+                    url = "LoginController";
+                } else if (action.equals("logout")) {
+                    HttpSession session = request.getSession();
+                    session.invalidate(); // Hủy bỏ session
+                    url = "login.jsp";
+                } else if (action.equals("search")) {
+                    url = "SearchController";
                 }
-            } catch (Exception e) {
             }
-        } else{
-            response.sendRedirect("DashboardController");
+
+        } catch (Exception e) {
+            log("error at MainController: "+ e.toString());
+        }finally{
+            request.getRequestDispatcher(url).forward(request, response);
         }
     }
 
